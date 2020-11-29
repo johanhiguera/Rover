@@ -1,0 +1,55 @@
+#PARAMETROS DE CONSTRUCCIÓN DEL ROBOT
+# RADIO DE RUEDA:
+radius : 0.075
+
+# Ubicaciones ruedas derechas
+alpha_r1 : 1.04041
+beta_r1 : 2.10117
+l_r1 : 0.4019374749
+
+alpha_r2 : 0
+beta_r2 : 3.14159
+l_r2 : 0.254275
+
+alpha_r3 : -1.04041
+beta_r3 : -2.10117
+l_r3 : 0.4019374749
+
+# Ubicaciones ruedas izquierdas
+alpha_l1 : 2.10117
+beta_l1 : 1.04041
+l_l1 : 0.4019374749
+
+alpha_l2 : 3.14159
+beta_l2 : 0
+l_l2 : 0.254575
+
+alpha_l3 : -2.10117
+beta_l3 : -1.04041
+l_l3 : 0.4019374749
+
+#PARAMETROS DEL ROBOT
+w_max : 2.0                        #VELOCIDAD ANGULAR MAXIMA
+vel_cruc : 6.6                     #VELOCIDAD DE CRUCERO TRASLACIONAL
+dv : 0.05
+dw : 0.1
+
+#PARAMETROS DE INVOCACIÓN ROBOT
+x : 0.0                            #POSICION X INICIAL DEL ROBOT
+y : 0.0                            #POSICION Y INICIAL DEL ROBOT
+theta : 0.0                      #ORIENTACION INICIAL DEL ROBOT
+
+#PARAMETROS DE COORDENADAS Y TRAYECTORIA
+coordenadas : [[0.0, 0.0],
+              [ 0.0, 6.5],
+              [-6.5, 6.5],
+              [-6.5, 0.0],
+              [ 0.0, 0.0]]
+ds : 3                             #DISTANCIAMIENTO ENTRE PUNTOS DE TRAYECTORIA
+num_coor_tray : 0
+
+#PARAMETROS DEL PROGRAMA
+f : 20                             #FRECUENCIA DE PUBLICACION
+
+#PARAMETROS DEL CONTROLADOR DEL ROBOT
+Kp : [ 5, 0.05,-2]                 #COEFICIENTES DEL CONTROLADOR PROPORCIONAL

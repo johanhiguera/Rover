@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- MAPA DE PRUEBAS-->
+    <arg name="mapa" default="$(find rover_RYCSV)/worlds/mapa.world"/>
+
+    <!-- OPEN GAZEBO -->
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="$(arg mapa)"/> 
+        <arg name="use_sim_time" value="true"/>
+        <arg name="debug" value="false"/>
+        <arg name="paused" value="false"/>
+    </include>
+</launch>

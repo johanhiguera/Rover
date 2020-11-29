@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- SAVE PARAMETERS OF .YAMLS IN ROS PARAMETERS SERVER -->
+    <rosparam file="$(find rover_RYCSV)/config/joint_names_Rover_RYCSV.yaml" command="load" />
+    <rosparam file="$(find rover_RYCSV)/config/parameters.yaml" command="load" />
+
+    <!-- MAPA DE PRUEBAS-->
+    <arg name="mapa" default="$(find rover_RYCSV)/worlds/mapa.world"/>
+
+    <!-- ARGUMENTS IN ROBOT SPAWN NODE-->
+    <arg name="x" default="0.0"/>
+    <arg name="y" default="0.0"/>
+    <arg name="z" default="2.0"/>
+    <arg name="roll" default="0.0"/>
+    <arg name="pitch" default="0.0"/>
+    <arg name="yaw" default="3.141592"/>
+    <arg name="robot_name" value="rover"/>
+
+    <param 
+        name="robot_description" 
+        command="$(find xacro)/xacro '$(find rover_RYCSV)/urdf/rover_RYCSV.urdf.xacro'"
+    />
+    
+    <!-- AUX NODES OF GAZEBO AND ROS -->
+
+    <node 
+        pkg="robot_state_publisher" 
+        type="robot_state_publisher" 
+        name="rob_pub" />
+
+    <node 
+        name="spawner_ctrols" 
+        pkg="controller_manager" 
+        type="spawner" 
+        respawn="false"
+        output="screen"
+        args="  joint_state_controller
+                left_motor_1
+                left_motor_2
+                left_motor_3
+                right_motor_1
+                right_motor_2
+                right_motor_3
+                dir_left_llanta_1
+                dir_left_llanta_3
+                dir_right_llanta_1
+                dir_right_llanta_3
+                rocker_izq
+                rocker_der
+                bogie_izq
+                bogie_der"
+    />
+
+    <!-- OPEN GAZEBO -->
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="$(arg mapa)"/> 
+        <arg name="use_sim_time" value="true"/>
+        <arg name="debug" value="false"/>
+        <arg name="paused" value="false"/>
+    </include>
+
+    <!-- NODE OF ROBOT SPAWN -->
+    <node pkg="gazebo_ros" type="spawn_model" name="spawn_$(arg robot_name)"
+        args="-x $(arg x) -y $(arg y) -z $(arg z)
+            -R $(arg roll) -P $(arg pitch) -Y $(arg yaw)
+            -urdf -param robot_description 
+            -model $(arg robot_name)"
+            respawn="false">
+    </node>
+
+    <!-- NODES OF CONTROL ROBOT -->
+
+    <node 
+        pkg="rover_RYCSV" 
+        type="control_caja_node.py" 
+        name="Control_caja" 
+        output="screen">     
+    </node>
+
+    <node 
+        pkg="rover_RYCSV" 
+        type="control_motores_node.py" 
+        name="Control_motores" 
+        output="screen">     
+    </node>
+
+    <node 
+        pkg="rover_RYCSV" 
+        type="control_dir_ruedas_node.py" 
+        name="Control_dir_ruedas" 
+        output="screen">     
+    </node>
+
+    <node 
+        pkg="rover_RYCSV" 
+        type="TF_node.py" 
+        name="TF" 
+        output="screen">        
+    </node>
+</launch>

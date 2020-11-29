@@ -1,0 +1,13 @@
+material RyCSV/mapatest
+{
+  technique
+  {
+    pass
+    {
+      texture_unit
+      {
+        texture textazul.png
+      }
+    }
+  }
+}

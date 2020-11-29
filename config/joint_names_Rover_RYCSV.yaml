@@ -1,0 +1,64 @@
+joint_state_controller:
+  type: "joint_state_controller/JointStateController"
+  publish_rate: 50
+
+left_motor_1:
+  type: "velocity_controllers/JointVelocityController"
+  joint: Acople_1__rueda_1
+
+left_motor_2:
+  type: "velocity_controllers/JointVelocityController"
+  joint: Acople_2__rueda_2
+
+left_motor_3:
+  type: "velocity_controllers/JointVelocityController"
+  joint: Acople_3__rueda_3
+
+right_motor_1:
+  type: "velocity_controllers/JointVelocityController"
+  joint: Acople_4__rueda_4
+
+right_motor_2:
+  type: "velocity_controllers/JointVelocityController"
+  joint: Acople_5__rueda_5
+
+right_motor_3:
+  type: "velocity_controllers/JointVelocityController"
+  joint: Acople_6__rueda_6
+
+dir_left_llanta_1:
+  type: "effort_controllers/JointPositionController"
+  joint: Bogie_izq__acople_1
+  pid: {p: 10.0, i: 0.01, d: 1.0}
+
+dir_left_llanta_3:
+  type: "effort_controllers/JointPositionController"
+  joint: Rocker_izq__acople_3
+  pid: {p: 10.0, i: 0.01, d: 1.0}
+
+dir_right_llanta_1:
+  type: "effort_controllers/JointPositionController"
+  joint: Bogie_der__acople_4
+  pid: {p: 10.0, i: 0.01, d: 1.0}
+
+dir_right_llanta_3:
+  type: "effort_controllers/JointPositionController"
+  joint: Rocker_der__acople_6
+  pid: {p: 10.0, i: 0.01, d: 1.0}
+
+rocker_izq:
+  type: "effort_controllers/JointEffortController"
+  joint: Caja__rocker_izq
+
+rocker_der:
+  type: "effort_controllers/JointPositionController"
+  joint: Caja__rocker_der
+  pid: {p: 10.0, i: 0.01, d: 5.0}
+
+bogie_izq:
+  type: "effort_controllers/JointEffortController"
+  joint: Rocker_izq__bogie_izq
+
+bogie_der:
+  type: "effort_controllers/JointEffortController"
+  joint: Rocker_der__bogie_der

@@ -1,0 +1,1405 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot name="rover_RYCSV" xmlns:xacro="http://ros.org/wiki/xacro">  
+  <xacro:arg name="imu_enable" default="true"/>
+  <xacro:arg name="gps_enable" default="true"/>
+  <!-- Si el sensor kinect esta habilitado entonces la camara y lidar no lo pueden estar-->
+  <xacro:arg name="kinect_enable" default="false"/>
+  <xacro:arg name="camera_and_lidar_enable" default="true"/>
+
+  <link name="base_footprint"/>
+    
+  <link
+    name="Caja">
+    <inertial>
+      <origin
+        xyz="0.019215 0.035889 0.05"
+        rpy="0 0 0" />
+      <mass
+        value="0.85251" />
+      <inertia
+        ixx="0.0069418"
+        ixy="-1.7693E-15"
+        ixz="3.7876E-09"
+        iyy="0.017066"
+        iyz="1.5323E-16"
+        izz="0.010668" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rover_RYCSV/meshes/Caja.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rover_RYCSV/meshes/Caja.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint
+    name="Base_caja"
+    type="fixed">
+    <origin
+      xyz="0 0 0.24353"
+      rpy="1.5708 0 0" />
+    <parent
+      link="base_footprint" />
+    <child
+      link="Caja" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+
+  <link
+    name="Rocker_izq">
+    <inertial>
+      <origin
+        xyz="-0.080274 -0.041512 0.019003"
+        rpy="0 0 0" />
+      <mass
+        value="0.1082" />
+      <inertia
+        ixx="8.6219E-05"
+        ixy="-7.325E-05"
+        ixz="-4.9534E-12"
+        iyy="0.00047706"
+        iyz="4.152E-13"
+        izz="0.00051824" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rover_RYCSV/meshes/Rocker_izq.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rover_RYCSV/meshes/Rocker_izq.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint
+    name="Caja__rocker_izq"
+    type="revolute">
+    <origin
+      xyz="0 0.0533 0.28225"
+      rpy="3.1416 0 3.1408" />
+    <parent
+      link="Caja" />
+    <child
+      link="Rocker_izq" />
+    <limit 
+      effort="30" velocity="10.0" lower="-3.14159" upper="3.14159" />
+    <axis
+      xyz="0 0 1" />
+  </joint>
+
+  <link
+    name="Bogie_izq">
+    <inertial>
+      <origin
+        xyz="0.057154 -0.0066452 -0.011153"
+        rpy="0 0 0" />
+      <mass
+        value="0.051738" />
+      <inertia
+        ixx="1.4768E-05"
+        ixy="-1.5398E-06"
+        ixz="2.9101E-19"
+        iyy="4.4433E-05"
+        iyz="-2.0476E-21"
+        izz="5.6518E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rover_RYCSV/meshes/Bogie_izq.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rover_RYCSV/meshes/Bogie_izq.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint
+    name="Rocker_izq__bogie_izq"
+    type="revolute">
+    <origin
+      xyz="0.175396751230297 -0.0942654690027159 0.0229999999999996"
+      rpy="0 0 -0.0145421781375742" />
+    <parent
+      link="Rocker_izq" />
+    <child
+      link="Bogie_izq" />
+    <axis
+      xyz="0 0 1" />
+    <limit 
+      effort="30" velocity="10.0" lower="-3.14159" upper="3.14159" />
+  </joint>
+
+  <link
+    name="Acople_1">
+    <inertial>
+      <origin
+        xyz="9.4449E-06 0.0077088 0.026447"
+        rpy="0 0 0" />
+      <mass
+        value="0.16994" />
+      <inertia
+        ixx="9.4027E-05"
+        ixy="-2.2813E-08"
+        ixz="-4.5333E-08"
+        iyy="6.2172E-05"
+        iyz="1.3902E-06"
+        izz="9.2038E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rover_RYCSV/meshes/Acople_1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rover_RYCSV/meshes/Acople_1.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint
+    name="Bogie_izq__acople_1"
+    type="continuous">
+    <origin
+      xyz="0.17745 -0.12528 -0.021025"
+      rpy="0 0 0.011289" />
+    <parent
+      link="Bogie_izq" />
+    <child
+      link="Acople_1" />
+    <axis
+      xyz="0 1 0" />
+    <limit 
+      effort="0.98" velocity="6.54498" />
+  </joint>
+
+  <link
+    name="Rueda_1">
+    <inertial>
+      <origin
+        xyz="0.020364 -5.3429E-16 -1.4322E-14"
+        rpy="0 0 0" />
+      <mass
+        value="0.31746" />
+      <inertia
+        ixx="0.0014409"
+        ixy="-1.7532E-19"
+        ixz="3.9312E-19"
+        iyy="0.00087534"
+        iyz="0"
+        izz="0.00087534" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rover_RYCSV/meshes/Rueda_1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.7451 0.73725 0.72941 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rover_RYCSV/meshes/Rueda_1.STL" />
+      </geometry>
+    </collision>
+  </link>
+<!--  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++   -->
+  <joint
+    name="Acople_1__rueda_1"
+    type="continuous">
+    <origin
+      xyz="0 0 -0.011825"
+      rpy="3.0964 -1.5708 0" />
+    <parent
+      link="Acople_1" />
+    <child
+      link="Rueda_1" />
+    <axis
+      xyz="1 0 0" />
+    <limit 
+      effort="0.1" velocity="10.0" />
+  </joint>
+
+  <link
+    name="Acople_2">
+    <inertial>
+      <origin
+        xyz="8.8555E-06 0.0087348 -0.014003"
+        rpy="0 0 0" />
+      <mass
+        value="0.17034" />
+      <inertia
+        ixx="0.00010208"
+        ixy="-2.2828E-08"
+        ixz="-4.5333E-08"
+        iyy="5.8059E-05"
+        iyz="-1.6248E-06"
+        izz="0.00010424" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rover_RYCSV/meshes/Acople_2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rover_RYCSV/meshes/Acople_2.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint
+    name="Bogie_izq__acople_2"
+    type="fixed">
+    <origin
+      xyz="-0.17516 -0.13012 -0.0185"
+      rpy="0 0 -0.93188" />
+    <parent
+      link="Bogie_izq" />
+    <child
+      link="Acople_2" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+
+  <link
+    name="Rueda_2">
+    <inertial>
+      <origin
+        xyz="0.020364 2.2003E-10 -2.5009E-10"
+        rpy="0 0 0" />
+      <mass
+        value="0.31746" />
+      <inertia
+        ixx="0.0014409"
+        ixy="6.1102E-12"
+        ixz="-6.9451E-12"
+        iyy="0.00087534"
+        iyz="-2.183E-19"
+        izz="0.00087534" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rover_RYCSV/meshes/Rueda_2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.7451 0.73725 0.72941 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rover_RYCSV/meshes/Rueda_2.STL" />
+      </geometry>
+    </collision>
+  </link>
+<!--  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++   -->
+  <joint
+    name="Acople_2__rueda_2"
+    type="continuous">
+    <origin
+      xyz="0 0 -0.053075"
+      rpy="0.39754 -1.5708 0" />
+    <parent
+      link="Acople_2" />
+    <child
+      link="Rueda_2" />
+    <axis
+      xyz="1 0 0" />
+    <limit 
+      effort="0.1" velocity="10.0" />
+  </joint>
+
+  <link
+    name="Acople_3">
+    <inertial>
+      <origin
+        xyz="9.4449E-06 0.0077088 0.026447"
+        rpy="0 0 0" />
+      <mass
+        value="0.16994" />
+      <inertia
+        ixx="9.4027E-05"
+        ixy="-2.2813E-08"
+        ixz="-4.5333E-08"
+        iyy="6.2172E-05"
+        iyz="1.3902E-06"
+        izz="9.2038E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rover_RYCSV/meshes/Acople_3.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rover_RYCSV/meshes/Acople_3.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint
+    name="Rocker_izq__acople_3"
+    type="continuous">
+    <origin
+      xyz="-0.34812 -0.22154 0.0019767"
+      rpy="0 -0.019032 0" />
+    <parent
+      link="Rocker_izq" />
+    <child
+      link="Acople_3" />
+    <axis
+      xyz="0 1 0" />
+    <limit 
+      effort="0.98" velocity="6.54498" />
+  </joint>
+
+  <link
+    name="Rueda_3">
+    <inertial>
+      <origin
+        xyz="0.020364 3.8164E-17 1.1102E-16"
+        rpy="0 0 0" />
+      <mass
+        value="0.31746" />
+      <inertia
+        ixx="0.0014409"
+        ixy="8.3242E-19"
+        ixz="3.5779E-18"
+        iyy="0.00087534"
+        iyz="-2.4161E-19"
+        izz="0.00087534" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rover_RYCSV/meshes/Rueda_3.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.7451 0.73725 0.72941 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rover_RYCSV/meshes/Rueda_3.STL" />
+      </geometry>
+    </collision>
+  </link>
+<!--  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++   -->
+  <joint
+    name="Acople_3__rueda_3"
+    type="continuous">
+    <origin
+      xyz="0 0 -0.011825"
+      rpy="2.9847 -1.5708 0" />
+    <parent
+      link="Acople_3" />
+    <child
+      link="Rueda_3" />
+    <axis
+      xyz="1 0 0" />
+    <limit 
+      effort="0.1" velocity="10.0" />
+  </joint>
+
+  <link
+    name="Rocker_der">
+    <inertial>
+      <origin
+        xyz="-0.080274 -0.041512 0.00334"
+        rpy="0 0 0" />
+      <mass
+        value="0.1082" />
+      <inertia
+        ixx="8.6219E-05"
+        ixy="-7.3251E-05"
+        ixz="4.947E-12"
+        iyy="0.00047706"
+        iyz="-4.8627E-13"
+        izz="0.00051824" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rover_RYCSV/meshes/Rocker_der.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rover_RYCSV/meshes/Rocker_der.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint
+    name="Caja__rocker_der"
+    type="revolute">
+    <origin
+      xyz="0 0.0533 -0.15991"
+      rpy="3.1416 0 3.1408" />
+    <parent
+      link="Caja" />
+    <child
+      link="Rocker_der" />
+    <axis
+      xyz="0 0 1" />
+    <limit 
+      effort="30" velocity="10.0" lower="-3.14159" upper="3.14159" />
+  </joint>
+
+  <link
+    name="Bogie_der">
+    <inertial>
+      <origin
+        xyz="0.057154 -0.0066452 0.011847"
+        rpy="0 0 0" />
+      <mass
+        value="0.051738" />
+      <inertia
+        ixx="1.4768E-05"
+        ixy="-1.5398E-06"
+        ixz="-8.0266E-20"
+        iyy="4.4433E-05"
+        iyz="-2.9194E-20"
+        izz="5.6518E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rover_RYCSV/meshes/Bogie_der.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rover_RYCSV/meshes/Bogie_der.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint
+    name="Rocker_der__bogie_der"
+    type="revolute">
+    <origin
+      xyz="0.1754 -0.094265 -0.00065699"
+      rpy="0 0 -0.014542" />
+    <parent
+      link="Rocker_der" />
+    <child
+      link="Bogie_der" />
+    <axis
+      xyz="0 0 1" />
+    <limit 
+      effort="30" velocity="10.0" lower="-3.14159" upper="3.14159" />
+  </joint>
+
+  <link
+    name="Acople_4">
+    <inertial>
+      <origin
+        xyz="9.4449E-06 0.0077088 0.026447"
+        rpy="0 0 0" />
+      <mass
+        value="0.16994" />
+      <inertia
+        ixx="9.4027E-05"
+        ixy="-2.2813E-08"
+        ixz="-4.5333E-08"
+        iyy="6.2172E-05"
+        iyz="1.3902E-06"
+        izz="9.2038E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rover_RYCSV/meshes/Acople_4.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rover_RYCSV/meshes/Acople_4.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint
+    name="Bogie_der__acople_4"
+    type="continuous">
+    <origin
+      xyz="0.17745 -0.12528 0.021025"
+      rpy="-3.1416 0 -3.1303" />
+    <parent
+      link="Bogie_der" />
+    <child
+      link="Acople_4" />
+    <axis
+      xyz="0 1 0" />
+    <limit 
+      effort="0.98" velocity="6.54498" />
+  </joint>
+
+  <link
+    name="Rueda_4">
+    <inertial>
+      <origin
+        xyz="0.020364 -7.1609E-15 -1.1657E-14"
+        rpy="0 0 0" />
+      <mass
+        value="0.31746" />
+      <inertia
+        ixx="0.0014409"
+        ixy="4.1287E-19"
+        ixz="2.6622E-19"
+        iyy="0.00087534"
+        iyz="1.8974E-19"
+        izz="0.00087534" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rover_RYCSV/meshes/Rueda_4.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.7451 0.73725 0.72941 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rover_RYCSV/meshes/Rueda_4.STL" />
+      </geometry>
+    </collision>
+  </link>
+<!--  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++   -->
+  <joint
+    name="Acople_4__rueda_4"
+    type="continuous">
+    <origin
+      xyz="0 0 -0.011825"
+      rpy="2.596 -1.5708 0" />
+    <parent
+      link="Acople_4" />
+    <child
+      link="Rueda_4" />
+    <axis
+      xyz="1 0 0" />
+    <limit 
+      effort="0.1" velocity="10.0" />
+  </joint>
+
+  <link
+    name="Acople_5">
+    <inertial>
+      <origin
+        xyz="8.8534E-06 0.0087348 -0.014003"
+        rpy="0 0 0" />
+      <mass
+        value="0.17034" />
+      <inertia
+        ixx="0.00010208"
+        ixy="-2.283E-08"
+        ixz="-4.5341E-08"
+        iyy="5.8059E-05"
+        iyz="-1.6248E-06"
+        izz="0.00010424" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rover_RYCSV/meshes/Acople_5.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rover_RYCSV/meshes/Acople_5.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint
+    name="Bogie_der__acople_5"
+    type="fixed">
+    <origin
+      xyz="-0.17516 -0.13012 0.0245"
+      rpy="-3.1416 0 2.2097" />
+    <parent
+      link="Bogie_der" />
+    <child
+      link="Acople_5" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+
+  <link
+    name="Rueda_5">
+    <inertial>
+      <origin
+        xyz="0.020364 1.3878E-17 2.0817E-17"
+        rpy="0 0 0" />
+      <mass
+        value="0.31746" />
+      <inertia
+        ixx="0.0014409"
+        ixy="4.2337E-19"
+        ixz="-1.2727E-19"
+        iyy="0.00087534"
+        iyz="-5.421E-20"
+        izz="0.00087534" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rover_RYCSV/meshes/Rueda_5.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.7451 0.73725 0.72941 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rover_RYCSV/meshes/Rueda_5.STL" />
+      </geometry>
+    </collision>
+  </link>
+<!--  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++   -->
+  <joint
+    name="Acople_5__rueda_5"
+    type="continuous">
+    <origin
+      xyz="0 0 -0.053075"
+      rpy="2.744 -1.5708 0" />
+    <parent
+      link="Acople_5" />
+    <child
+      link="Rueda_5" />
+    <axis
+      xyz="1 0 0" />
+    <limit 
+      effort="0.1" velocity="10.0" />
+  </joint>
+
+  <link
+    name="Acople_6">
+    <inertial>
+      <origin
+        xyz="9.4449E-06 0.0077088 0.026447"
+        rpy="0 0 0" />
+      <mass
+        value="0.16994" />
+      <inertia
+        ixx="9.4027E-05"
+        ixy="-2.2813E-08"
+        ixz="-4.5333E-08"
+        iyy="6.2172E-05"
+        iyz="1.3902E-06"
+        izz="9.2038E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rover_RYCSV/meshes/Acople_6.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rover_RYCSV/meshes/Acople_6.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint
+    name="Rocker_der__acople_6"
+    type="continuous">
+    <origin
+      xyz="-0.3483 -0.22154 0.020368"
+      rpy="3.1416 0 -3.1416" />
+    <parent
+      link="Rocker_der" />
+    <child
+      link="Acople_6" />
+    <axis
+      xyz="0 1 0" />
+    <limit 
+      effort="0.98" velocity="6.54498" />
+  </joint>
+
+  <link
+    name="Rueda_6">
+    <inertial>
+      <origin
+        xyz="0.020364 -7.1054E-15 -1.1491E-14"
+        rpy="0 0 0" />
+      <mass
+        value="0.31746" />
+      <inertia
+        ixx="0.0014409"
+        ixy="-2.6304E-19"
+        ixz="7.5089E-19"
+        iyy="0.00087534"
+        iyz="5.421E-20"
+        izz="0.00087534" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rover_RYCSV/meshes/Rueda_6.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.7451 0.73725 0.72941 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rover_RYCSV/meshes/Rueda_6.STL" />
+      </geometry>
+    </collision>
+  </link>
+<!--  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++   -->
+  <joint
+    name="Acople_6__rueda_6"
+    type="continuous">
+    <origin
+      xyz="0 0 -0.011825"
+      rpy="2.5927 -1.5708 0" />
+    <parent
+      link="Acople_6" />
+    <child
+      link="Rueda_6" />
+    <axis
+      xyz="1 0 0" />
+    <limit 
+      effort="0.1" velocity="10.0" />
+  </joint>
+
+  <!-- ____________________________________ACTUADORES____________________________________ -->
+  <!-- MOTORREDUCTORES DE LAS RUEDAS -->
+  <transmission name="tranmission_1">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="Acople_1__rueda_1">
+          <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="left_motor_1">
+          <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+  </transmission>
+
+  <transmission name="tranmission_2">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="Acople_2__rueda_2">
+          <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="left_motor_2">
+          <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+  </transmission>
+
+  <transmission name="tranmission_3">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="Acople_3__rueda_3">
+          <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="left_motor_3">
+          <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+  </transmission>
+
+  <transmission name="tranmission_4">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="Acople_4__rueda_4">
+          <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="right_motor_1">
+          <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+  </transmission>
+
+  <transmission name="tranmission_5">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="Acople_5__rueda_5">
+          <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="right_motor_2">
+          <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+  </transmission>
+
+  <transmission name="tranmission_6">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="Acople_6__rueda_6">
+          <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="right_motor_3">
+          <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+  </transmission>
+
+  <!-- SERVOMOTORES DE DIRECCION DE LAS LLANTAS -->
+  <transmission name="tranmission_7">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="Bogie_izq__acople_1">
+          <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="dir_left_llanta_1">
+          <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+  </transmission>
+
+  <transmission name="tranmission_8">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="Rocker_izq__acople_3">
+          <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="dir_left_llanta_3">
+          <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+  </transmission>
+
+  <transmission name="tranmission_9">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="Bogie_der__acople_4">
+          <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="dir_right_llanta_1">
+          <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+  </transmission>
+
+  <transmission name="tranmission_10">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="Rocker_der__acople_6">
+          <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="dir_right_llanta_3">
+          <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+  </transmission>
+
+  <!-- NIVELADORES DE CAJA -->
+  <transmission name="tranmission_11">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="Caja__rocker_izq">
+          <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="rocker_izq">
+          <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </actuator>
+  </transmission>
+
+  <transmission name="tranmission_12">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="Caja__rocker_der">
+          <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="rocker_der">
+          <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+  </transmission>
+
+  <!-- ASEGURADORES DE LA UNIONES ENTRE ROCKERS Y BOGIES -->
+  <transmission name="tranmission_13">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="Rocker_izq__bogie_izq">
+          <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="bogie_izq">
+          <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </actuator>
+  </transmission>
+
+  <transmission name="tranmission_14">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="Rocker_der__bogie_der">
+          <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="bogie_der">
+          <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </actuator>
+  </transmission>
+
+  <gazebo>
+      <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+          <robotNamespace>/</robotNamespace>
+      </plugin>
+   </gazebo>
+
+  <!-- ____________________________________SENSORES____________________________________ -->
+  <!-- SENSOR KINECT -->
+  <xacro:if value="$(arg kinect_enable)">
+    <xacro:include filename="$(find rover_RYCSV)/urdf/kinect.gazebo.xacro" />
+    <link name="Sensor_kinect">
+      <inertial>
+        <origin
+          xyz="0 0 0"
+          rpy="0 0 0" />
+        <mass
+          value="0.01" />
+        <inertia
+          ixx="0.0001"
+          ixy="0.0"
+          ixz="0.0"
+          iyy="0.0001"
+          iyz="0.0"
+          izz="0.0001" />
+      </inertial>
+      <visual>
+        <origin
+          xyz="0 0 0"
+          rpy="0 0 0" />
+        <geometry>
+          <mesh 
+            filename="package://rover_RYCSV/meshes/sensor_kinect.stl"
+            scale= "0.01 0.01 0.01"/>
+        </geometry>
+        <material
+          name="">
+          <color
+            rgba="1 1 1 1" />
+        </material>
+      </visual>
+      <collision>
+        <origin
+          xyz="0 0 0"
+          rpy="0 0 0" />
+        <geometry>
+          <mesh 
+            filename="package://rover_RYCSV/meshes/sensor_kinect.stl"
+            scale= "0.01 0.01 0.01"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint
+      name="Caja_kinect"
+      type="fixed">
+      <origin
+        xyz="-0.245 0.035 -0.1"
+        rpy="-1.570709 -1.570709 0" />
+      <parent
+        link="Caja" />
+      <child
+        link="Sensor_kinect" />
+      <axis
+        xyz="0 0 0" />
+    </joint>
+
+    <link name="camera_depth_frame"/>
+
+    <joint name="camera_depth_joint" type="fixed">
+      <origin xyz="0.147 0.0 0.02" rpy="0.0 0.0 -1.5707"/>
+      <parent link="Sensor_kinect"/>
+      <child link="camera_depth_frame"/>
+    </joint>
+      
+    <link name="camera_rgb_frame"/>
+
+    <joint name="camera_rgb_joint" type="fixed">
+      <origin xyz="0.076 0.0 0.02" rpy="0.0 0.0 -1.5707"/>
+      <parent link="Sensor_kinect"/>
+      <child link="camera_rgb_frame"/>
+    </joint>
+  </xacro:if>
+  
+  <!-- CAMARA Y LIDAR -->
+  <xacro:if value="$(arg camera_and_lidar_enable)">
+    <xacro:include filename="$(find rover_RYCSV)/urdf/camera.gazebo.xacro" />
+    <xacro:include filename="$(find rover_RYCSV)/urdf/lidar.gazebo.xacro" />
+    <link name="Camera">
+      <inertial>
+        <origin
+          xyz="0 0 0"
+          rpy="0 0 0" />
+        <mass
+          value="0.025" />
+        <inertia
+          ixx="0.0001"
+          ixy="0.0"
+          ixz="0.0"
+          iyy="0.0001"
+          iyz="0.0"
+          izz="0.0001" />
+      </inertial>
+      <visual>
+        <origin
+          xyz="0 0 0"
+          rpy="0 0 0" />
+        <geometry>
+          <box size="0.01 0.05 0.05"/>
+        </geometry>
+        <material
+          name="">
+          <color
+            rgba="1 1 1 1" />
+        </material>
+      </visual>
+      <collision>
+        <origin
+          xyz="0 0 0"
+          rpy="0 0 0" />
+        <geometry>
+          <box size="0.01 0.05 0.05"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint
+      name="Caja_camera"
+      type="fixed">
+      <origin
+        xyz="-0.225 0.095 0.047"
+        rpy="-1.570709 3.141592 0" />
+      <parent
+        link="Caja" />
+      <child
+        link="Camera" />
+      <axis
+        xyz="0 0 0" />
+    </joint>
+
+    <link name="Lidar">
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+      <box size="0.1 0.1 0.1"/>
+        </geometry>
+      </collision>
+
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://rover_RYCSV/meshes/hokuyo.dae"/>
+        </geometry>
+      </visual>
+
+      <inertial>
+        <mass value="1e-5" />
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+      </inertial>
+    </link>
+
+    <joint
+      name="Caja_lidar"
+      type="fixed">
+      <origin
+        xyz="-0.225 0.035 0.047"
+        rpy="-1.570709 -3.141592 0" />
+      <parent
+        link="Caja" />
+      <child
+        link="Lidar" />
+      <axis
+        xyz="0 0 0" />
+    </joint>
+  </xacro:if>
+  
+  <!-- SENSOR IMU -->  
+  <xacro:if value="$(arg imu_enable)">
+    <xacro:include filename="$(find rover_RYCSV)/urdf/imu.gazebo.xacro" />
+    <link name="IMU">
+      <inertial>
+        <origin
+          xyz="0 0 0"
+          rpy="0 0 0" />
+        <mass
+          value="0.005" />
+        <inertia
+          ixx="0.00001"
+          ixy="0.0"
+          ixz="0.0"
+          iyy="0.00001"
+          iyz="0.0"
+          izz="0.00001" />
+      </inertial>
+      <visual>
+        <origin
+          xyz="0 0 0"
+          rpy="0 0 0" />
+        <geometry>
+          <box size="0.025 0.005 0.025"/>
+        </geometry>
+        <material
+          name="">
+          <color
+            rgba="1 1 1 1" />
+        </material>
+      </visual>
+      <collision>
+        <origin
+          xyz="0 0 0"
+          rpy="0 0 0" />
+        <geometry>
+          <box size="0.025 0.005 0.025"/>
+        </geometry>
+      </collision>
+    </link>
+    
+    <joint
+      name="Caja_IMU"
+      type="fixed">
+      <origin
+        xyz="0 0.0025 0.047"
+        rpy="0 0 0" />
+      <parent
+        link="Caja" />
+      <child
+        link="IMU" />
+      <axis
+        xyz="0 0 0" />
+    </joint>
+  </xacro:if>
+
+  <xacro:if value="$(arg gps_enable)">
+    <xacro:include filename="$(find rover_RYCSV)/urdf/gps.gazebo.xacro" />
+    <link name="GPS">
+      <inertial>
+        <origin
+          xyz="0 0 0"
+          rpy="0 0 0" />
+        <mass
+          value="0.005" />
+        <inertia
+          ixx="0.00001"
+          ixy="0.0"
+          ixz="0.0"
+          iyy="0.00001"
+          iyz="0.0"
+          izz="0.00001" />
+      </inertial>
+      <visual>
+        <origin
+          xyz="0 0 0"
+          rpy="0 0 0" />
+        <geometry>
+          <box size="0.025 0.005 0.025"/>
+        </geometry>
+        <material
+          name="">
+          <color
+            rgba="1 1 1 1" />
+        </material>
+      </visual>
+      <collision>
+        <origin
+          xyz="0 0 0"
+          rpy="0 0 0" />
+        <geometry>
+          <box size="0.025 0.005 0.025"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint
+      name="Caja_GPS"
+      type="fixed">
+      <origin
+        xyz="0.1 0.0025 0.047"
+        rpy="0 0 0" />
+      <parent
+        link="Caja" />
+      <child
+        link="GPS" />
+      <axis
+        xyz="0 0 0" />
+    </joint>
+  </xacro:if>
+</robot>
