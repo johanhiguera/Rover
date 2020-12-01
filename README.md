@@ -21,4 +21,4 @@
 
 _Lanzar modelo en Gazebo:_
 
-    roslaunch rover_RYCSV gazebo.launch
+    roslaunch rover_RYCSV empty_map.launch
