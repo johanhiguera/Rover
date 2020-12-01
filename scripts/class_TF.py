@@ -58,19 +58,27 @@ class TF:
             if(self.i < len(self.tray)-1):
                 self.update_odom() ## Se envia odometria y meta en tf
                 self.update_goal(self.i+1)
+                rospy.loginfo("DATOS IMU")
+                rospy.loginfo(self.theta_x)
+                rospy.loginfo(self.theta_y)
+                rospy.loginfo(self.theta_z)
+                rospy.loginfo("DATOS GPS")
+                rospy.loginfo(self.pos_x)
+                rospy.loginfo(self.pos_y)
+
                 rate.sleep()              
     
     def callback_gps(self,data): ## Callback del GPS
         if (self.first_gps == 1):
             #rospy.loginfo("Primerta posicion tomada")
             self.first_gps = 0                          ## Toma de posiciones iniciales
-            self.pos_x_init = data.longitude*111111
-            self.pos_y_init = data.latitude*111111
-            self.pos_x = data.longitude*111111
-            self.pos_y = data.latitude*111111 
+            self.pos_y_init = -data.longitude*111111
+            self.pos_x_init = data.latitude*111111
+            self.pos_y = -data.longitude*111111
+            self.pos_x = data.latitude*111111 
         else:
-            self.pos_x = data.longitude*111111 ##Posicion actual x
-            self.pos_y = data.latitude*111111##Posicion actual y
+            self.pos_y = -data.longitude*111111 ##Posicion actual x
+            self.pos_x = data.latitude*111111##Posicion actual y
             #rospy.loginfo("Posicion GPS registrada")
     
     def callback_imu(self,data): #Callback imu

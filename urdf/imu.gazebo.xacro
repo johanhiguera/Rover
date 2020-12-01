@@ -15,7 +15,7 @@
         <updateRateHZ>10.0</updateRateHZ>
         <gaussianNoise>0.0</gaussianNoise>
         <xyzOffset>0 0 0</xyzOffset>
-        <rpyOffset>0 0 0</rpyOffset>
+        <rpyOffset>0 0 3.141592/2</rpyOffset>
         <frameName>IMU</frameName>
         <initialOrientationAsReference>false</initialOrientationAsReference>
       </plugin>

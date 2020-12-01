@@ -102,15 +102,18 @@ class CONTROL:
         thetas = euler_from_quaternion([data.orientation.x,data.orientation.y,data.orientation.z,data.orientation.w])
         self.theta_x = thetas[0] - math.pi
         self.theta_y = thetas[1]
-        self.theta_z = thetas[2] + math.pi    ##Agulo Yaw de nuestro robot (Respecto de coordenadas mundiales)    
+        self.theta_z = thetas[2]     ##Agulo Yaw de nuestro robot (Respecto de coordenadas mundiales)    
     
     def Controlador_polar(self):                #FUNCION PARA EL CONTROL EN SISTEMA POLAR DEL ROVER
         self.dx     =  self.MTH[0,3]
         self.dy     =  self.MTH[1,3]
         self.theta  =  self.theta_z
         self.rho    =  math.sqrt(self.dx**2+self.dy**2)
-        self.beta   = -math.atan2(self.dy,self.dx)
-        self.alpha  = -self.theta - self.beta
+        self.beta   =  math.atan2(self.dy,self.dx) #-math.atan2(self.dy,self.dx)        ##alpha
+        self.alpha  = -self.theta + self.beta                   ##beta
+        
+       # while (self.theta > math.pi):
+        #    self.theta=self.theta-math.pi
 
         self.vel_y = self.Kp[0]*self.rho
         self.w = self.Kp[1]*self.alpha + self.Kp[2]*self.beta
@@ -139,16 +142,16 @@ class CONTROL:
         self.orden_anterior = self.order.data
         self.pub1.publish(self.order)
 
-        rospy.loginfo("--------------------------")
+        rospy.loginfo("----------------------")
         rospy.loginfo(self.dx)
         rospy.loginfo(self.dy)
         rospy.loginfo(self.theta)
-        rospy.loginfo(self.rho)
+        #rospy.loginfo(self.rho)
         rospy.loginfo(self.beta)
         rospy.loginfo(self.alpha)
         
-        #rospy.loginfo(self.vel_y)
-        #rospy.loginfo(self.w)
+        rospy.loginfo(self.vel_y)
+        rospy.loginfo(self.w)
         #rospy.loginfo("self.MTH")
         #rospy.loginfo(self.MTH)
 
