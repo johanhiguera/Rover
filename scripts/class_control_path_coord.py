@@ -115,8 +115,13 @@ class CONTROL:
        # while (self.theta > math.pi):
         #    self.theta=self.theta-math.pi
 
+        rospy.loginfo("parametros")
+        rospy.loginfo(self.Kp[0]*self.rho)
+        rospy.loginfo(self.Kp[1]*self.beta)
+        rospy.loginfo(self.Kp[2]*self.alpha)
+
         self.vel_y = self.Kp[0]*self.rho
-        self.w = self.Kp[1]*self.alpha + self.Kp[2]*self.beta
+        self.w = self.Kp[2]*self.alpha + self.Kp[1]*self.beta
 
         if self.vel_y > self.vel_cruc:
             self.vel_y = self.vel_cruc
@@ -132,12 +137,12 @@ class CONTROL:
             self.vel_y = self.orden_anterior[0] + self.dv/self.f ##en velocidad lineal
         elif self.vel_y - self.orden_anterior[0] < -self.dv/self.f:
             self.vel_y = self.orden_anterior[0] - self.dv/self.f
-
+        """
         if self.w - self.orden_anterior[1] > self.dw/self.f: ##Limitacion de maximo cambio
             self.w = self.orden_anterior[1] + self.dw/self.f##En velocidad angular (Giro ruedas)
         elif self.w - self.orden_anterior[1] < -self.dw/self.f:
             self.w = self.orden_anterior[1] - self.dw/self.f
-
+        """
         self.order.data = [self.vel_y,self.w]
         self.orden_anterior = self.order.data
         self.pub1.publish(self.order)
