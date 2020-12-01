@@ -37,7 +37,6 @@ class TF:
         self.position = Float64MultiArray()
         self.pos_x = 0
         self.pos_y = 0
-        self.theta = 0
         self.first_gps = 1
         self.pos_x_init = 0
         self.pos_y_init = 0
@@ -48,7 +47,7 @@ class TF:
 
         self.update_coor() ##Actualizacion de coordenadas y creacion de trayectoria
         self.creacion_tray()
-        #rospy.loginfo(self.coordenadas)
+        rospy.loginfo(self.coordenadas)
         rospy.loginfo(self.tray)        
 
         rate = rospy.Rate(self.f)
@@ -95,7 +94,11 @@ class TF:
         for i in range(len(self.coordenadas1)):
             alpha = math.atan2(self.coordenadas1[i][1],self.coordenadas1[i][0])
             r = math.sqrt(self.coordenadas1[i][1]**2+self.coordenadas1[i][0]**2)
+            rospy.loginfo("Valores coordenadas")
+            rospy.loginfo(r)
+            rospy.loginfo(self.theta+alpha)
             self.coordenadas[i] = (r*math.cos(alpha+self.theta),r*math.sin(alpha+self.theta))
+            
 
     def creacion_tray(self):                    #FUNCION PARA CREAR Y LLENAR LA MATRIZ SELF.TRAY
         self.tray = []

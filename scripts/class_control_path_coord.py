@@ -102,7 +102,7 @@ class CONTROL:
         thetas = euler_from_quaternion([data.orientation.x,data.orientation.y,data.orientation.z,data.orientation.w])
         self.theta_x = thetas[0] - math.pi
         self.theta_y = thetas[1]
-        self.theta_z = thetas[2]    ##Agulo Yaw de nuestro robot (Respecto de coordenadas mundiales)    
+        self.theta_z = thetas[2] + math.pi    ##Agulo Yaw de nuestro robot (Respecto de coordenadas mundiales)    
     
     def Controlador_polar(self):                #FUNCION PARA EL CONTROL EN SISTEMA POLAR DEL ROVER
         self.dx     =  self.MTH[0,3]

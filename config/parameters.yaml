@@ -37,7 +37,7 @@ dw : 0.1
 #PARAMETROS DE INVOCACIÓN ROBOT
 x : 0.0                            #POSICION X INICIAL DEL ROBOT
 y : 0.0                            #POSICION Y INICIAL DEL ROBOT
-theta : 0.0                      #ORIENTACION INICIAL DEL ROBOT
+theta : 270.0                      #ORIENTACION INICIAL DEL ROBOT
 
 #PARAMETROS DE COORDENADAS Y TRAYECTORIA
 coordenadas : [[0.0, 0.0],
