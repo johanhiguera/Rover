@@ -22,3 +22,11 @@
 _Lanzar modelo en Gazebo:_
 
     roslaunch rover_RYCSV empty_map.launch
+    
+    
+_Nodo de control:_
+
+    rosrun rover_RYCSV control_path_coord_node.py 
+
+    
+    
