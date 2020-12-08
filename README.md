@@ -40,6 +40,11 @@ _Para cambiar a control lineal en el archivo:
     Comentar:
     
     from class_TF import TF              ##Polar
+    
+    Y se corre el nodo de control:
+    
+    rosrun rover_RYCSV controlador_node.py 
+
 
 _Se deben instalar los paquetes:
 
