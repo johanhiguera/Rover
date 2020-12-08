@@ -40,11 +40,16 @@ y : 0.0                            #POSICION Y INICIAL DEL ROBOT
 theta : 0.0                      #ORIENTACION INICIAL DEL ROBOT
 
 #PARAMETROS DE COORDENADAS Y TRAYECTORIA
+
 coordenadas : [[0.0, 0.0],
               [ 0.0, 6.5],
-              [-6.5, 6.5],
-              [-6.5, 0.0],
+              [-4.5, 3.0],
+              [ 2.5, 3.0],
+              [ 0.0, 6.5],
+              [ 6.5, 6.5],
+              [ 3.5, 2.0],
               [ 0.0, 0.0]]
+
 ds : 3                             #DISTANCIAMIENTO ENTRE PUNTOS DE TRAYECTORIA
 num_coor_tray : 0
 

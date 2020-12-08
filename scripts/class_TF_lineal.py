@@ -52,9 +52,13 @@ class TF:
             self.i = 0 #VARIABLE PARA RECORRER MATRIZ SELF.TRAY (COORDENADAS DE TRAYECTORIA EN EL SISTEMA DEL ROBOT)
 
         self.update_coor() ##Actualizacion de coordenadas y creacion de trayectoria
+        self.evadir_mpi ()
         self.creacion_tray()
-        #rospy.loginfo(self.coordenadas)
-        rospy.loginfo(self.tray)        
+        rospy.loginfo("----------------------------------------------")
+        rospy.loginfo(self.coordenadas_new) 
+        rospy.loginfo("----------------------------------------------")
+        rospy.loginfo(self.tray)  
+             
 
         rate = rospy.Rate(self.f)
 
@@ -111,21 +115,45 @@ class TF:
             r = math.sqrt(self.coordenadas1[i][1]**2+self.coordenadas1[i][0]**2)
             self.coordenadas[i] = (r*math.cos(alpha+self.theta),r*math.sin(alpha+self.theta))
 
+    def evadir_mpi (self):
+        self.error_x = 0
+        self.error_y = 0
+        b=1
+        dist_variacion = 1
+        self.coordenadas_new = []
+        self.coordenadas_new.append(0)
+        self.coordenadas_new [0] = (self.coordenadas[0][0],self.coordenadas[0][1]) 
+        for j in range(len(self.coordenadas)-1):
+
+            self.error_x = self.coordenadas[j+1][0]-self.coordenadas[j][0]
+            self.error_y = self.coordenadas[j+1][1]-self.coordenadas[j][1]
+            self.coordenadas_new.append(0)
+            if ((abs(self.error_y) < 0.03) and (abs(self.error_x) > 0.03) and (self.error_x < 0)):
+                self.coordenadas_new.append(0)
+                self.coordenadas_new [b]=(self.coordenadas[j][0]+(self.error_x)/2,self.coordenadas[j][1]+dist_variacion)
+                b=b+1
+            self.coordenadas_new [b]=(self.coordenadas[j+1][0],self.coordenadas[j+1][1])
+            b=b+1
 
 
     def creacion_tray(self):                    #FUNCION PARA CREAR Y LLENAR LA MATRIZ SELF.TRAY
         self.tray = []
         a=1
 
-        for j in range(len(self.coordenadas)):
+        self.tray.append(0)
+        self.tray[0]=(self.coordenadas_new[0][0],self.coordenadas_new[0][1],0)
+
+        for j in range(len(self.coordenadas_new)):
+
+
             if (j == 0): 
-                dx = self.coordenadas[j+1][0]-self.coordenadas[j][0]
-                dy = self.coordenadas[j+1][1]-self.coordenadas[j][1]
+                dx = self.coordenadas_new[j+1][0]-self.coordenadas_new[j][0]
+                dy = self.coordenadas_new[j+1][1]-self.coordenadas_new[j][1]
                 s = math.sqrt(dx**2+dy**2)
                 n = s/self.ds
-            elif (j <= len(self.coordenadas)-1):
-                dx = self.coordenadas[j][0]-self.coordenadas[j-1][0]
-                dy = self.coordenadas[j][1]-self.coordenadas[j-1][1]
+            elif (j <= len(self.coordenadas_new)-1):
+                dx = self.coordenadas_new[j][0]-self.coordenadas_new[j-1][0]
+                dy = self.coordenadas_new[j][1]-self.coordenadas_new[j-1][1]
                 s = math.sqrt(dx**2+dy**2)
                 n = s/self.ds
             
@@ -134,12 +162,10 @@ class TF:
             else:
                 k = int(n)+1
             
-            self.tray.append(0)
-            self.tray[0]=(0,0,0)
 
             if j == 0:
                 self.tray.append(0)
-            elif (j == 1) or (j == (len(self.coordenadas)-1)):    
+            elif (j == 1) or (j == (len(self.coordenadas_new)-1)):    
                 for i in range(k):
                     self.tray.append(0)
             elif j > 1:
@@ -150,11 +176,11 @@ class TF:
                 for b in range(k):
 
                     if (j!=1):
-                        self.tray[a]=(self.coordenadas[j-1][0]+(b)*dx*self.ds/s,self.coordenadas[j-1][1]+(b)*dy*self.ds/s,self.tray[a-1][2])
+                        self.tray[a]=(self.coordenadas_new[j-1][0]+(b)*dx*self.ds/s,self.coordenadas_new[j-1][1]+(b)*dy*self.ds/s,self.tray[a-1][2])
                         a=a+1
 
                     elif (b!=0):
-                        self.tray[a]=(self.coordenadas[j-1][0]+(b)*dx*self.ds/s,self.coordenadas[j-1][1]+(b)*dy*self.ds/s,self.tray[a-1][2])
+                        self.tray[a]=(self.coordenadas_new[j-1][0]+(b)*dx*self.ds/s,self.coordenadas_new[j-1][1]+(b)*dy*self.ds/s,self.tray[a-1][2])
                         a=a+1
                     
                     if (b == 0) and (j!=1):
@@ -162,12 +188,13 @@ class TF:
                         a=a+1 
  
             if j == 0:
-                self.tray[a]=(self.coordenadas[j][0],self.coordenadas[j][0], math.atan2(dy,dx))  
+                self.tray[a]=(self.coordenadas_new[j][0],self.coordenadas_new[j][0], math.atan2(dy,dx))  
                 a=a+1
 
-        self.last_coor = (self.coordenadas[len(self.coordenadas)-1][0],self.coordenadas[len(self.coordenadas)-1][1],self.tray[a-1][2])
+        self.last_coor = (self.coordenadas_new[len(self.coordenadas_new)-1][0],self.coordenadas_new[len(self.coordenadas_new)-1][1],self.tray[a-1][2])
         self.tray.append(self.last_coor)
         rospy.set_param('/num_coor_tray', len(self.tray))
+
 
     def callback_next(self,data):     #FUNCION DE INTERRUPION PARA CAMBIAR A LA SIGUIENTE COORDENADA DE TRAYECTORIA
         if self.i < rospy.get_param("/num_coor_tray"):
