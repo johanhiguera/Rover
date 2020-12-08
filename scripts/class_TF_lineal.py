@@ -79,13 +79,13 @@ class TF:
         if (self.first_gps == 1):
             #rospy.loginfo("Primerta posicion tomada")
             self.first_gps = 0                          ## Toma de posiciones iniciales
-            self.pos_x_init = data.longitude*111111
-            self.pos_y_init = data.latitude*111111
-            self.pos_x = data.longitude*111111
-            self.pos_y = data.latitude*111111 
+            self.pos_y_init = -data.longitude*111111
+            self.pos_x_init = data.latitude*111111
+            self.pos_y = -data.longitude*111111
+            self.pos_x = data.latitude*111111 
         else:
-            self.pos_x = data.longitude*111111 ##Posicion actual x
-            self.pos_y = data.latitude*111111##Posicion actual y
+            self.pos_y = -data.longitude*111111 ##Posicion actual x
+            self.pos_x = data.latitude*111111##Posicion actual y
             #rospy.loginfo("Posicion GPS registrada")
     
     def callback_imu(self,data): #Callback imu
@@ -176,8 +176,6 @@ class TF:
         #rospy.loginfo("CAMBIO DE COORDENADA")
 
     def update_goal(self, i): #FUNCION PARA ACTUALIZAR LA MATRIZ DE TRANSFORMACION ODOM-GOAL PERIODICAMENTE
-        
-        self.angles_goal_odom = quaternion_from_euler( 0, 0, self.tray[self.i][2])
 
         t = TransformStamped()
         t.header.frame_id = "odom"
@@ -187,10 +185,10 @@ class TF:
         t.transform.translation.y = self.tray[i][1]
         t.transform.translation.z = 0.0
 
-        t.transform.rotation.x = self.angles_goal_odom [0]
-        t.transform.rotation.y = self.angles_goal_odom [1]
-        t.transform.rotation.z = self.angles_goal_odom [2]
-        t.transform.rotation.w = self.angles_goal_odom [3]
+        t.transform.rotation.x = 0.0 #self.angles_goal_odom [0]
+        t.transform.rotation.y = 0.0 #self.angles_goal_odom [1]
+        t.transform.rotation.z = 0.0 #self.angles_goal_odom [2]
+        t.transform.rotation.w = 1.0 #self.angles_goal_odom [3]
 
         self.broadcts.sendTransform(t)
         rospy.loginfo("Coordenadas de meta")
@@ -201,7 +199,6 @@ class TF:
 
     def update_odom(self): #FUNCION PARA ACTUALIZAR LA MATRIZ DE TRANSFORMACION ODOM-ROBOT PERIODICAMENTE
         
-        self.angles_odom_base = quaternion_from_euler( 0, 0, self.theta_z+3.14159/2)
 
         to = TransformStamped()
         to.header.frame_id = "odom"
@@ -211,9 +208,9 @@ class TF:
         to.transform.translation.y = (self.pos_y-self.pos_y_init)##Posicion en y del robot
         to.transform.translation.z = 0.0
 
-        to.transform.rotation.x = self.angles_odom_base [0]
-        to.transform.rotation.y = self.angles_odom_base [1]
-        to.transform.rotation.z = self.angles_odom_base [2]
-        to.transform.rotation.w = self.angles_odom_base [3]
+        to.transform.rotation.x = 0.0 #self.angles_odom_base [0]
+        to.transform.rotation.y = 0.0 #self.angles_odom_base [1]
+        to.transform.rotation.z = 0.0 #self.angles_odom_base [2]
+        to.transform.rotation.w = 1.0 #self.angles_odom_base [3]
 
         self.broadcts.sendTransform(to)   

@@ -11,7 +11,7 @@
             <topicName>rover/gps/pos</topicName>
             <velocityTopicName>rover/gps/vel</velocityTopicName>
             <drift>0.0 0.0 0.0</drift>
-            <gaussianNoise>0.0 0.0 0.0</gaussianNoise>
+            <gaussianNoise>0.00000000001 0.00000000001 0.00000000001</gaussianNoise>
             <velocityDrift>0 0 0</velocityDrift>
             <velocityGaussianNoise>0.0 0.0 0.0</velocityGaussianNoise>
             <referenceLatitude>0</referenceLatitude>

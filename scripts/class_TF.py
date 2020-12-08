@@ -8,12 +8,18 @@ import tf2_ros
 import tf2_msgs.msg
 
 from    geometry_msgs.msg   import TransformStamped
+from    geometry_msgs.msg   import Point
+from    geometry_msgs.msg   import Quaternion
+from    geometry_msgs.msg   import Pose
+from    geometry_msgs.msg   import PoseWithCovarianceStamped
+from    geometry_msgs.msg   import PoseWithCovariance
 from    std_msgs.msg        import Bool
 from    std_msgs.msg        import Float64MultiArray
 from    sensor_msgs.msg     import NavSatFix
 from    sensor_msgs.msg     import Imu
 from tf.transformations     import euler_from_quaternion
 from tf.transformations     import quaternion_from_euler
+from    nav_msgs.msg        import Odometry
 
 class TF:  
 
@@ -23,11 +29,15 @@ class TF:
         self.broadcts  = tf2_ros.TransformBroadcaster()
         self.transform = TransformStamped()
 
+
+        self.pub1 = rospy.Publisher("/meta_partida",Float64MultiArray,queue_size=50)
+
         #SUBSCRIPCION AL TOPICO DE COMUNICACION ENTRE TF_NODE Y CONTROLADOR_NODE
         rospy.Subscriber("/next_coord",Bool,self.callback_next)
         #rospy.Subscriber("/vel_robot",numpy_msg(Twist),self.callback_position)
         rospy.Subscriber("/rover/gps/pos",NavSatFix,self.callback_gps)
         rospy.Subscriber("/rover/imu",Imu,self.callback_imu)
+        rospy.Subscriber("/robot_pose_ekf/odom_combined",PoseWithCovarianceStamped,self.callback_odometry)
 
         #PARAMETROS
         self.theta = - rospy.get_param("/theta")* 3.141592 / 180.0
@@ -35,12 +45,14 @@ class TF:
         self.f = rospy.get_param("/f")
         self.coordenadas1 = rospy.get_param("/coordenadas")
         self.position = Float64MultiArray()
+        self.meta_partida = Float64MultiArray()
         self.pos_x = 0
         self.pos_y = 0
         self.first_gps = 1
         self.pos_x_init = 0
         self.pos_y_init = 0
         self.angles = [ 0, 0, 0, 0]
+        self.k = 0
 
         while self.first_gps:
             self.i = 0 #VARIABLE PARA RECORRER MATRIZ SELF.TRAY (COORDENADAS DE TRAYECTORIA EN EL SISTEMA DEL ROBOT)
@@ -58,13 +70,15 @@ class TF:
             if(self.i < len(self.tray)-1):
                 self.update_odom() ## Se envia odometria y meta en tf
                 self.update_goal(self.i+1)
-                rospy.loginfo("DATOS IMU")
+                self.meta_partida.data = [self.tray[self.i+1][0],self.tray[self.i+1][1],self.tray[self.i][0],self.tray[self.i][1]]
+                self.pub1.publish(self.meta_partida)
+                """rospy.loginfo("DATOS IMU")
                 rospy.loginfo(self.theta_x)
                 rospy.loginfo(self.theta_y)
                 rospy.loginfo(self.theta_z)
                 rospy.loginfo("DATOS GPS")
                 rospy.loginfo(self.pos_x)
-                rospy.loginfo(self.pos_y)
+                rospy.loginfo(self.pos_y)"""
 
                 rate.sleep()              
     
@@ -93,6 +107,36 @@ class TF:
         self.theta_y = thetas[1]
         self.theta_z = thetas[2]    ##Agulo Yaw de nuestro robot (Respecto de coordenadas mundiales)
         #rospy.loginfo("Lectura IMU registrada")
+
+
+    def callback_odometry(self,data): ## Callback del GPS
+       #rospy.loginfo("Primerta posicion tomada")
+        self.odom_ = PoseWithCovarianceStamped()
+        self.odom_ = data
+        self.odom = PoseWithCovariance()
+        self.odom = self.odom_.pose
+        self.pose = Pose()
+        self.pose = self.odom.pose
+        self.angulos_ = Quaternion()
+        self.angulos_ = self.pose.orientation
+        self.angulos = euler_from_quaternion([self.angulos_.x,self.angulos_.y,self.angulos_.z,self.angulos_.w])
+        self.odometry = Point()
+        self.odometry_initial =Point()
+        
+        if self.k == 0:
+            self.odometry_initial = self.pose.position
+            self.k = 1
+        else:
+            self.odometry.x = self.pose.position.x - self.odometry_initial.x
+            self.odometry.y = self.pose.position.y - self.odometry_initial.y
+            self.odometry.z = self.pose.position.z - self.odometry_initial.z
+            
+
+        #rospy.loginfo("AAAAAAAAAAAAAAAAAAa")
+        #rospy.loginfo(self.angulos[2]-self.theta_z)
+
+        #rospy.loginfo("Posicion GPS registrada")
+
 
     def update_coor(self):                      #FUNCION PARA CAMBIAR LAS COORDENADAS EN TERMINOS DEL SISTEMA DE REFERENCIA DEL ROBOT
         self.coordenadas = []
@@ -162,7 +206,6 @@ class TF:
 
     def update_odom(self): #FUNCION PARA ACTUALIZAR LA MATRIZ DE TRANSFORMACION ODOM-ROBOT PERIODICAMENTE
         
-        self.angles_odom_base = quaternion_from_euler( 0, 0, self.theta_z)
 
         to = TransformStamped()
         to.header.frame_id = "odom"

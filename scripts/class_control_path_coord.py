@@ -10,6 +10,11 @@ import tf_conversions
 
 from    std_msgs.msg        import Bool
 from    std_msgs.msg        import Float64MultiArray
+from    geometry_msgs.msg   import Point
+from    geometry_msgs.msg   import Quaternion
+from    geometry_msgs.msg   import Pose
+from    geometry_msgs.msg   import PoseWithCovarianceStamped
+from    geometry_msgs.msg   import PoseWithCovariance
 from    sensor_msgs.msg     import Imu
 from tf.transformations     import euler_from_quaternion
 
@@ -34,6 +39,8 @@ class CONTROL:
         self.listener = tf2_ros.TransformListener(self.tfBuffer)
 
         rospy.Subscriber("/rover/imu",Imu,self.callback_imu)
+        rospy.Subscriber("/meta_partida",Float64MultiArray,self.callback_meta_partida)
+        rospy.Subscriber("/robot_pose_ekf/odom_combined",PoseWithCovarianceStamped,self.callback_odometry)
 
         #COMUNICACION ENTRE EL CONTROLADOR_NODE Y KOBUKI
         self.pub1 = rospy.Publisher("/vel_order",Float64MultiArray,queue_size=50)
@@ -46,9 +53,11 @@ class CONTROL:
         self.next.data = True
         self.order = Float64MultiArray()
         self.position = Float64MultiArray()
+        self.meta_inicio = [0,0,0,0]
         self.vel_y = 0.0
         self.w = 0.0
         self.theta_parcial=0
+        self.k=0
         rate = rospy.Rate(self.f)
 
         self.j=0                                #VARIABLE QUE INDICA CUANTOS CAMBIOS DE COORDENADAS SE HAN REALIZADO
@@ -70,14 +79,19 @@ class CONTROL:
 
                 self.rho    = 10
                 self.theta  = 0
-                while (self.rho >= self.vel_cruc/self.Kp[0]):
+                while (self.rho >= self.vel_cruc/self.Kp[0] and self.rho >= 1):
                     self.MTH = self.Calcular_MTH()
                     if(len(self.MTH) != 1):
                         self.Controlador_polar()
                     
                     rate.sleep()
                 self.pub_next_coord.publish(self.next)
+                rospy.loginfo("----------------------")
                 rospy.loginfo ("Cambio de coordenadas")
+                rate.sleep()
+                rate.sleep()
+                rate.sleep()
+                rate.sleep()
                 rate.sleep()
 
     
@@ -102,12 +116,51 @@ class CONTROL:
         thetas = euler_from_quaternion([data.orientation.x,data.orientation.y,data.orientation.z,data.orientation.w])
         self.theta_x = thetas[0] - math.pi
         self.theta_y = thetas[1]
-        self.theta_z = thetas[2]     ##Agulo Yaw de nuestro robot (Respecto de coordenadas mundiales)    
-    
+        self.theta_z = thetas[2]     ##Agulo Yaw de nuestro robot (Respecto de coordenadas mundiales)   
+
+    def callback_meta_partida(self,meta_partida): #Callback meta_partida
+        self.meta_inicio = [meta_partida.data[0],meta_partida.data[1],meta_partida.data[2],meta_partida.data[3]]
+        #rospy.loginfo(self.meta_inicio)
+
+    def callback_odometry(self,data): ## Callback del GPS
+       #rospy.loginfo("Primerta posicion tomada")
+        self.odom_ = PoseWithCovarianceStamped()
+        self.odom_ = data
+        self.odom = PoseWithCovariance()
+        self.odom = self.odom_.pose
+        self.pose = Pose()
+        self.pose = self.odom.pose
+        self.angulos_ = Quaternion()
+        self.angulos_ = self.pose.orientation
+        self.angulos = euler_from_quaternion([self.angulos_.x,self.angulos_.y,self.angulos_.z,self.angulos_.w])
+        self.odometry = Point()
+        self.odometry_initial =Point()
+        
+        if self.k == 0:
+            self.odometry_initial = self.pose.position
+            self.k = 1
+        else:
+            self.odometry.x = self.pose.position.x - self.odometry_initial.x
+            self.odometry.y = self.pose.position.y - self.odometry_initial.y
+            self.odometry.z = self.pose.position.z - self.odometry_initial.z
+            
+
+        #rospy.loginfo("AAAAAAAAAAAAAAAAAAa")
+        #rospy.loginfo(self.angulos[2]-self.theta_z)
+
+        #rospy.loginfo("Posicion GPS registrada")
+
     def Controlador_polar(self):                #FUNCION PARA EL CONTROL EN SISTEMA POLAR DEL ROVER
         self.dx     =  self.MTH[0,3]
         self.dy     =  self.MTH[1,3]
-        self.theta  =  self.theta_z
+        self.theta  =  self.angulos[2]
+
+        if abs(self.dx) < 0.1:
+            self.dx = abs(self.dx)
+
+        if abs(self.dy) < 0.1:
+            self.dy = abs(self.dy)
+
         self.rho    =  math.sqrt(self.dx**2+self.dy**2)
         self.beta   =  math.atan2(self.dy,self.dx) #-math.atan2(self.dy,self.dx)        ##alpha
         self.alpha  = -self.theta + self.beta                   ##beta
@@ -115,10 +168,6 @@ class CONTROL:
        # while (self.theta > math.pi):
         #    self.theta=self.theta-math.pi
 
-        rospy.loginfo("parametros")
-        rospy.loginfo(self.Kp[0]*self.rho)
-        rospy.loginfo(self.Kp[1]*self.beta)
-        rospy.loginfo(self.Kp[2]*self.alpha)
 
         self.vel_y = self.Kp[0]*self.rho
         self.w = self.Kp[2]*self.alpha + self.Kp[1]*self.beta
@@ -132,33 +181,52 @@ class CONTROL:
             self.w = self.w_max
         elif self.w < -self.w_max:
             self.w = -self.w_max
-
+        
         if self.vel_y - self.orden_anterior[0] > self.dv/self.f: ##Limitacion de maximo cambio
             self.vel_y = self.orden_anterior[0] + self.dv/self.f ##en velocidad lineal
         elif self.vel_y - self.orden_anterior[0] < -self.dv/self.f:
             self.vel_y = self.orden_anterior[0] - self.dv/self.f
+        
         """
         if self.w - self.orden_anterior[1] > self.dw/self.f: ##Limitacion de maximo cambio
             self.w = self.orden_anterior[1] + self.dw/self.f##En velocidad angular (Giro ruedas)
         elif self.w - self.orden_anterior[1] < -self.dw/self.f:
             self.w = self.orden_anterior[1] - self.dw/self.f
         """
+
         self.order.data = [self.vel_y,self.w]
         self.orden_anterior = self.order.data
         self.pub1.publish(self.order)
 
+
+        
+        #self.rho    =  math.sqrt(self.dx**2+self.dy**2)
+        #self.beta   =  math.atan2(self.dy,self.dx) 
+        #self.alpha  = -self.theta + self.beta 
+
+        #Kp = [ 5, 0.005,-2]
+
+        #self.vel_y = self.Kp[0]*self.rho
+        #self.w = self.Kp[2]*self.alpha + self.Kp[1]*self.beta
+
+
         rospy.loginfo("----------------------")
+        rospy.loginfo("errores")
         rospy.loginfo(self.dx)
         rospy.loginfo(self.dy)
         rospy.loginfo(self.theta)
         #rospy.loginfo(self.rho)
+        rospy.loginfo("polares")
         rospy.loginfo(self.beta)
-        rospy.loginfo(self.alpha)
-        
+        rospy.loginfo(self.alpha) 
+        rospy.loginfo("parametros")
+        rospy.loginfo(self.Kp[0]*self.rho)
+        rospy.loginfo(self.Kp[1]*self.beta)
+        rospy.loginfo(self.Kp[2]*self.alpha)
+        rospy.loginfo("velocidades")      
         rospy.loginfo(self.vel_y)
         rospy.loginfo(self.w)
-        #rospy.loginfo("self.MTH")
-        #rospy.loginfo(self.MTH)
+
 
     
 

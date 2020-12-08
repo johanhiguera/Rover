@@ -29,9 +29,9 @@ beta_l3 : -1.04041
 l_l3 : 0.4019374749
 
 #PARAMETROS DEL ROBOT
-w_max : 0.6                        #VELOCIDAD ANGULAR MAXIMA
-vel_cruc : 6.6                     #VELOCIDAD DE CRUCERO TRASLACIONAL
-dv : 0.05
+w_max : 1.2                        #VELOCIDAD ANGULAR MAXIMA
+vel_cruc : 1.6                     #VELOCIDAD DE CRUCERO TRASLACIONAL
+dv : 0.3
 dw : 0.1
 
 #PARAMETROS DE INVOCACIÓN ROBOT

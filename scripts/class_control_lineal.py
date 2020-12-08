@@ -21,7 +21,6 @@ class CONTROL:
         self.f = rospy.get_param("/f")
         self.vel_cruc = rospy.get_param("/vel_cruc")
         self.w_max = rospy.get_param("/w_max")
-        self.Kp = rospy.get_param("/Kp")
         self.dv = rospy.get_param("/dv")
         self.dw = rospy.get_param("/dw")
         self.num_coor_tray = 0     #NUMERO DE COORDENADAS DE LA TRAYECTORIA QUE SE CALCULA EN TF_NODE
@@ -55,12 +54,11 @@ class CONTROL:
         self.theta_parcial=0
         rate = rospy.Rate(self.f)
         self.ori = 0
-        self.Kp = [5,5,0.5]
-        self.Ki = [0.01,0.01,0]
         self.e = [0,0,0]
         self.e_sum = [0,0,0]
         self.e_ =10
         self.meta = [0,0,0]
+        self.e_p = 0.03
 
         self.j=0                                #VARIABLE QUE INDICA CUANTOS CAMBIOS DE COORDENADAS SE HAN REALIZADO
         self.MTH = [0]                          #MATRIZ DE TRANSFORMACION ODOM-GOAL
@@ -82,16 +80,27 @@ class CONTROL:
 
                 self.indic=0
                 self.e_ = 10
-                while (self.e_ >= 0.1):
+                self.e[2] = 10
+                while ((self.e_ >= 0.25)):
 
                     self.MTH = self.Calcular_MTH()
                     if(len(self.MTH) != 1):
-                        self.Controlador_lineal()  
+                        
+                        if self.e_p < 0.2:
+                            self.Controlador_lineal()
+                            rospy.loginfo("----------------------")
+                            rospy.loginfo("Activo lineal")
+                        else:
+                            self.Controlador_polar()
+                            rospy.loginfo("----------------------")
+                            rospy.loginfo("Activo polar") 
                     rate.sleep()
+
 
                 self.pub_next_coord.publish(self.next)
                 self.order.data=[0.0,0.0]
                 self.pub1.publish(self.order)
+                rospy.loginfo("----------------------")
                 rospy.loginfo ("Cambio de coordenadas")
                 rate.sleep()
                 rate.sleep()
@@ -127,22 +136,33 @@ class CONTROL:
         self.theta_z = thetas[2]    ##Agulo Yaw de nuestro robot (Respecto de coordenadas mundiales)    
     
     def Controlador_lineal(self):                #FUNCION PARA EL CONTROL EN SISTEMA POLAR DEL ROVER
+        self.Kp = [5, 5, -0.8]
+        self.Ki = [0.01, 0.01, 0]
 
         self.indic=self.indic+1
+
         self.e[0] = self.MTH[0,3]
         self.e[1] = self.MTH[1,3]
-        self.e[2] = -self.theta_z + self.meta [2]
+        self.e[2] = self.meta[2] - self.theta_z
+        self.e_p = math.sqrt(self.e[0]**2+self.e[1]**2)
+
+        if (abs(self.e[2]) > 0.05) and (self.e_p < 0.2):
+            self.Kp = [5, 5, 1]
+        else:
+            self.Kp = [5, 5, -1] 
 
         self.e_sum[0] = self.e_sum[0] + self.e[0]/self.f
         self.e_sum[1] = self.e_sum[1] + self.e[1]/self.f
         self.e_sum[2] = self.e_sum[2] + self.e[2]/self.f
         self.e_ = math.sqrt(self.e[0]**2+self.e[1]**2+self.e[2]**2)
 
-        if (abs(self.e[0]) > 0.1) or (abs(self.e[1] > 0.1)):
+        """if (abs(self.e[0]) > 0.05) or (abs(self.e[1] > 0.05)):
             self.vel_y = self.Kp[0]*self.e[0]+self.Kp[1]*self.e[1]+self.Ki[0]*self.e_sum[0]+self.Ki[1]*self.e_sum[1]
         else:
-            self.vel_y = 0           
+            self.vel_y = 0           """
         
+        self.vel_y=0
+
         self.w = self.Kp[2]*self.e[2]+self.Ki[2]*self.e_sum[2]
 
                         
@@ -156,29 +176,126 @@ class CONTROL:
         elif self.w < -self.w_max:
             self.w = -self.w_max
 
+        """
         if self.vel_y - self.orden_anterior[0] > self.dv/self.f: ##Limitacion de maximo cambio
             self.vel_y = self.orden_anterior[0] + self.dv/self.f ##en velocidad lineal
         elif self.vel_y - self.orden_anterior[0] < -self.dv/self.f:
-            self.vel_y = self.orden_anterior[0] - self.dv/self.f
+            self.vel_y = self.orden_anterior[0] - self.dv/self.f    
+        """
 
+        """
         if self.w - self.orden_anterior[1] > self.dw/self.f: ##Limitacion de maximo cambio
             self.w = self.orden_anterior[1] + self.dw/self.f##En velocidad angular (Giro ruedas)
         elif self.w - self.orden_anterior[1] < -self.dw/self.f:
             self.w = self.orden_anterior[1] - self.dw/self.f
+        """
 
         self.order.data = [self.vel_y,self.w]
         self.orden_anterior = self.order.data
         self.pub1.publish(self.order)
-              
-        rospy.loginfo("A")
+        """
+        rospy.loginfo("----------------------")
+        rospy.loginfo("Errores")
         rospy.loginfo(self.e[0])
         rospy.loginfo(self.e[1])
+        rospy.loginfo(self.meta[2])
+        rospy.loginfo(self.theta_z)
         rospy.loginfo(self.e[2])
+        rospy.loginfo("Error total")
+        rospy.loginfo(self.e_)
+        rospy.loginfo(self.e_p)
+        rospy.loginfo("Velocidades")
         rospy.loginfo(self.vel_y)
         rospy.loginfo(self.w)
         #rospy.loginfo(self.coordenadas[j+1][0])
         #rospy.loginfo(self.coordenadas[j+1][1])
         #rospy.loginfo(self.coordenadas[j+1][2])
+        """
+
+    def Controlador_polar(self):                #FUNCION PARA EL CONTROL EN SISTEMA POLAR DEL ROVER
+        
+        self.Kp = [ 5, 0.005,-2]
+
+        self.dx     =  self.MTH[0,3]
+        self.dy     =  self.MTH[1,3]
+        self.theta  =  self.theta_z
+        self.e_p = math.sqrt(self.dx**2+self.dy**2)
+        self.e_ = math.sqrt(self.dx**2+self.dy**2+(self.meta[2] - self.theta)**2)
+
+        if abs(self.dx) < 0.1:
+            self.dx = abs(self.dx)
+
+        if abs(self.dy) < 0.1:
+            self.dy = abs(self.dy)
+
+        self.rho    =  math.sqrt(self.dx**2+self.dy**2)
+        self.beta   =  math.atan2(self.dy,self.dx) #-math.atan2(self.dy,self.dx)        ##alpha
+        self.alpha  = -self.theta + self.beta                   ##beta
+        
+
+        
+        # while (self.theta > math.pi):
+        #    self.theta=self.theta-math.pi
+
+        self.vel_y = self.Kp[0]*self.rho
+        self.w = self.Kp[2]*self.alpha + self.Kp[1]*self.beta
+
+        if self.vel_y > self.vel_cruc:
+            self.vel_y = self.vel_cruc
+        elif self.vel_y < -self.vel_cruc:
+            self.vel_y = -self.vel_cruc
+
+        if self.w > self.w_max:
+            self.w = self.w_max
+        elif self.w < -self.w_max:
+            self.w = -self.w_max
+        
+        if self.vel_y - self.orden_anterior[0] > self.dv/self.f: ##Limitacion de maximo cambio
+            self.vel_y = self.orden_anterior[0] + self.dv/self.f ##en velocidad lineal
+        elif self.vel_y - self.orden_anterior[0] < -self.dv/self.f:
+            self.vel_y = self.orden_anterior[0] - self.dv/self.f
+        
+        """
+        if self.w - self.orden_anterior[1] > self.dw/self.f: ##Limitacion de maximo cambio
+            self.w = self.orden_anterior[1] + self.dw/self.f##En velocidad angular (Giro ruedas)
+        elif self.w - self.orden_anterior[1] < -self.dw/self.f:
+            self.w = self.orden_anterior[1] - self.dw/self.f
+        """
+
+        self.order.data = [self.vel_y,self.w]
+        self.orden_anterior = self.order.data
+        self.pub1.publish(self.order)
+
+
+        
+        #self.rho    =  math.sqrt(self.dx**2+self.dy**2)
+        #self.beta   =  math.atan2(self.dy,self.dx) 
+        #self.alpha  = -self.theta + self.beta 
+
+        #Kp = [ 4, -0.005,6]
+
+        #self.vel_y = self.Kp[0]*self.rho
+        #self.w = self.Kp[2]*self.alpha + self.Kp[1]*self.beta
+
+        
+        rospy.loginfo("----------------------")
+        rospy.loginfo("errores")
+        rospy.loginfo(self.dx)
+        rospy.loginfo(self.dy)
+        rospy.loginfo(self.theta)
+        rospy.loginfo(self.e_)
+        rospy.loginfo(self.e_p)
+        #rospy.loginfo(self.rho)
+        rospy.loginfo("polares")
+        rospy.loginfo(self.beta)
+        rospy.loginfo(self.alpha) 
+        rospy.loginfo("parametros")
+        rospy.loginfo(self.Kp[0]*self.rho)
+        rospy.loginfo(self.Kp[1]*self.beta)
+        rospy.loginfo(self.Kp[2]*self.alpha)
+        rospy.loginfo("velocidades")      
+        rospy.loginfo(self.vel_y)
+        rospy.loginfo(self.w)
 
     
 
