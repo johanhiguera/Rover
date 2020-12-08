@@ -27,6 +27,23 @@ _Lanzar modelo en Gazebo:_
 _Nodo de control:_
 
     rosrun rover_RYCSV control_path_coord_node.py 
-
     
+    
+_Para cambiar a control lineal en el archivo:
+
+    TF_node.py 
+    
+    Descomentar
+    
+    from class_TF_lineal import TF     ##lineal
+    
+    Comentar:
+    
+    from class_TF import TF              ##Polar
+
+_Se deben instalar los paquetes:
+
+http://wiki.ros.org/robot_pose_ekf
+
+http://wiki.ros.org/gps_common
     
