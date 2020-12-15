@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <launch>
     <!-- SAVE PARAMETERS OF .YAMLS IN ROS PARAMETERS SERVER -->
-    <rosparam file="$(find rover_RYCSV)/config/joint_names_Rover_RYCSV.yaml" command="load" />
-    <rosparam file="$(find rover_RYCSV)/config/parameters.yaml" command="load" />
+    <rosparam file="$(find rover)/config/joint_names_rover.yaml" command="load" />
+    <rosparam file="$(find rover)/config/parameters.yaml" command="load" />
 
     <!-- MAPA DE PRUEBAS-->
-    <arg name="mapa" default="$(find rover_RYCSV)/worlds/empty.world"/>
+    <arg name="mapa" default="$(find rover)/worlds/empty.world"/>
 
     <!-- ARGUMENTS IN ROBOT SPAWN NODE-->
     <arg name="x" default="0.0"/>
@@ -18,7 +18,7 @@
 
     <param 
         name="robot_description" 
-        command="$(find xacro)/xacro '$(find rover_RYCSV)/urdf/rover_RYCSV.urdf.xacro'"
+        command="$(find xacro)/xacro '$(find rover)/urdf/rover.urdf.xacro'"
     />
     
     <!-- AUX NODES OF GAZEBO AND ROS -->
@@ -80,6 +80,9 @@
         <arg name="paused" value="false"/>
     </include>
 
+    <!-- RViz  -->
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find kobuki_lidar)/rviz/config.rviz"/>
+
     <!-- NODE OF ROBOT SPAWN -->
     <node pkg="gazebo_ros" type="spawn_model" name="spawn_$(arg robot_name)"
         args="-x $(arg x) -y $(arg y) -z $(arg z)
@@ -92,28 +95,28 @@
     <!-- NODES OF CONTROL ROBOT -->
 
     <node 
-        pkg="rover_RYCSV" 
+        pkg="rover" 
         type="control_caja_node.py" 
         name="Control_caja" 
         output="screen">     
     </node>
 
     <node 
-        pkg="rover_RYCSV" 
+        pkg="rover" 
         type="control_motores_node.py" 
         name="Control_motores" 
         output="screen">     
     </node>
 
     <node 
-        pkg="rover_RYCSV" 
+        pkg="rover" 
         type="control_dir_ruedas_node.py" 
         name="Control_dir_ruedas" 
         output="screen">     
     </node>
 
     <node 
-        pkg="rover_RYCSV" 
+        pkg="rover" 
         type="TF_node.py" 
         name="TF" 
         output="screen">        

@@ -21,12 +21,12 @@
 
 _Lanzar modelo en Gazebo:_
 
-    roslaunch rover_RYCSV empty_map.launch
+    roslaunch rover empty_map.launch
     
     
 _Nodo de control:_
 
-    rosrun rover_RYCSV control_path_coord_node.py 
+    rosrun rover control_path_coord_node.py 
     
     
 _Para cambiar a control lineal en el archivo:
@@ -43,7 +43,7 @@ _Para cambiar a control lineal en el archivo:
     
     Y se corre el nodo de control:
     
-    rosrun rover_RYCSV controlador_node.py 
+    rosrun rover controlador_node.py 
 
 
 _Se deben instalar los paquetes:

@@ -33,6 +33,7 @@ class CONTROL:
         self.pos_y=0.0
         self.pos_w=0.0
         self.theta_z = 0.0
+        self.angulos = [0,0,0]
         #CREACION DEL LISTENER
         self.pub_tf = rospy.Publisher("/tf", tf2_msgs.msg.TFMessage, queue_size=1)
         self.tfBuffer = tf2_ros.Buffer()
