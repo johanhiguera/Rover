@@ -54,10 +54,10 @@ class TF:
         self.update_coor() ##Actualizacion de coordenadas y creacion de trayectoria
         self.evadir_mpi ()
         self.creacion_tray()
-        rospy.loginfo("----------------------------------------------")
-        rospy.loginfo(self.coordenadas_new) 
-        rospy.loginfo("----------------------------------------------")
-        rospy.loginfo(self.tray)  
+        #rospy.loginfo("----------------------------------------------")
+        #rospy.loginfo(self.coordenadas_new) 
+        #rospy.loginfo("----------------------------------------------")
+        #rospy.loginfo(self.tray)  
              
 
         rate = rospy.Rate(self.f)
@@ -218,10 +218,10 @@ class TF:
         t.transform.rotation.w = 1.0 #self.angles_goal_odom [3]
 
         self.broadcts.sendTransform(t)
-        rospy.loginfo("Coordenadas de meta")
-        rospy.loginfo(self.tray[i][0])
-        rospy.loginfo(self.tray[i][1])
-        rospy.loginfo(self.tray[i][2])
+        #rospy.loginfo("Coordenadas de meta")
+        #rospy.loginfo(self.tray[i][0])
+        #rospy.loginfo(self.tray[i][1])
+        #rospy.loginfo(self.tray[i][2])
         
 
     def update_odom(self): #FUNCION PARA ACTUALIZAR LA MATRIZ DE TRANSFORMACION ODOM-ROBOT PERIODICAMENTE
