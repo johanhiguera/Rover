@@ -120,4 +120,18 @@
         name="TF" 
         output="screen">        
     </node>
+    
+    <node 
+        pkg="rover" 
+        type="load_image_node.py" 
+        name="image_loader" 
+        output="screen">        
+    </node>
+
+    <node 
+        pkg="rover" 
+        type="Seguimiento_Visual_Node.py" 
+        name="Seguimiento_visual_node" 
+        output="screen">        
+    </node>
 </launch>
