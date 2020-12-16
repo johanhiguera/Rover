@@ -17,7 +17,7 @@ class VISUAL:
         self.pos_x=0.0
         self.pos_y=0.0
         self.radius=10000
-        self.radius_ref = 50
+        self.radius_ref = 17
 
         rospy.Subscriber("/pelota",Float64MultiArray,self.callback_pelota)
 
@@ -41,12 +41,13 @@ class VISUAL:
             rate.sleep()
 
     def callback_pelota(self,data):
-        self.pos_x = data[0]
-        self.pos_y = data[1]
-        self.radius = data[2]
+        self.pos_x = data.data[0]
+        self.pos_y = data.data[1]
+        self.radius = data.data[2]
+        #rospy.loginfo(self.radius)
 
     def Controlador_polar(self):                #FUNCION PARA EL CONTROL EN SISTEMA POLAR DEL ROVER
-        self.vel_y = self.Kp[0]*(self.radius-self.radius_ref)
+        self.vel_y = self.Kp[0]*(self.radius_ref-self.radius)
         self.w = self.Kp[1]*self.pos_x
 
         if self.vel_y > self.vel_cruc:
