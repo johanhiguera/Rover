@@ -9,6 +9,8 @@ import numpy
 import cv2
 from cv_bridge import CvBridge, CvBridgeError
 
+from    std_msgs.msg        import Float64MultiArray
+
 import sys
 import tf2_ros
 
@@ -40,6 +42,11 @@ class Image_loader:
         self.image_width = None
         self.image_height = None
         self.image_length = None
+        self.radii = 0
+        self.x_cor = 0
+        self.y_cor = 0
+        self.datos_imagen = Float64MultiArray()
+
 
         self.p=0
         self.send_datos_edited_image = Image()
@@ -52,6 +59,7 @@ class Image_loader:
         
         ##Publicador de la nueva imagen
         self.pub_image = rospy.Publisher("/edited_image",numpy_msg(Image), queue_size = 10)
+        self.pub1 = rospy.Publisher("/pelota",Float64MultiArray,queue_size=50)
 
         self.image_pub = None
 
@@ -75,6 +83,31 @@ class Image_loader:
 
                 ###Aqui va el codigo de Sebastian
 
+                gray = cv2.cvtColor(cv_image, cv2.COLOR_RGB2GRAY)
+
+                circles = cv2.HoughCircles(gray,cv2.HOUGH_GRADIENT,1.31,260,param1=50,param2=30,minRadius=0,maxRadius=0)
+
+                if circles is not None:
+                    
+                    circles = np.round(circles[0, :]).astype("int")
+                    
+                    for (x, y, r) in circles:
+                        self.radii = r
+                        self.x_cor = x
+                        self.y_cor = y
+                        cv2.circle(cv_image, (x, y), r, (0, 255, 0), 2)
+                        cv2.rectangle(cv_image, (x - 2, y - 2), (x + 2, y + 2), (0, 128, 255), -1)
+                
+                #rospy.loginfo(self.radii)
+                #radii = circles[:,2]
+                #x_cor = circles[:,0]
+                #y_cor = circles[:,1]
+
+                xdis = self.x_cor - int(self.image_width / 2)
+                ydis = self.y_cor - int(self.image_width / 2)
+
+                self.datos_imagen.data = [xdis,ydis,self.radii]
+
                 self.edited_image = cv_image
 
                 self.send_datos_edited_image = self.bridge.cv2_to_imgmsg(self.edited_image, encoding="rgb8")
@@ -84,6 +117,7 @@ class Image_loader:
                     #rospy.loginfo(self.send_datos_edited_image)
                     self.p=1
                 self.pub_image.publish(self.send_datos_edited_image)
+                self.pub1.publish(self.datos_imagen)
                  
             rate.sleep()
 
@@ -98,4 +132,10 @@ if __name__ == '__main__':
     # Firt init the node and then the object to correctly find the parameters
     rospy.init_node('image_loader', anonymous=True)
     Image_loader()
+
+
+
+
+
+
     

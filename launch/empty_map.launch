@@ -5,7 +5,7 @@
     <rosparam file="$(find rover)/config/parameters.yaml" command="load" />
 
     <!-- MAPA DE PRUEBAS-->
-    <arg name="mapa" default="$(find rover)/worlds/animated_box3.world"/>
+    <arg name="mapa" default="$(find rover)/worlds/calibracion_estatico.world"/>
 
     <!-- ARGUMENTS IN ROBOT SPAWN NODE-->
     <arg name="x" default="0.0"/>
