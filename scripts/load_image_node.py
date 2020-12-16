@@ -77,25 +77,27 @@ class Image_loader:
             if(self.image_pub is not None):
 
                 cv_image = np.zeros((self.image_width,self.image_height), dtype = np.uint8)
-                base_image = np.zeros((self.image_width,self.image_height), dtype = np.uint8)
-                cv_image = self.image.copy() ##Se recibe la imagen del mapa
-                base_image = self.image.copy()              
+                cv_image = self.image.copy()
 
-                ###Aqui va el codigo de Sebastian
+                imagenHSV = cv2.cvtColor(cv_image, cv2.COLOR_RGB2HSV)
+                amarilloBajo = np.array([20, 100, 20], np.uint8)
+                amarilloAlto = np.array([32, 255, 255], np.uint8)
+                maskAmarillo = cv2.inRange(imagenHSV, amarilloBajo, amarilloAlto)
 
-                gray = cv2.cvtColor(cv_image, cv2.COLOR_RGB2GRAY)
+                #gray = cv2.cvtColor(cv_image, cv2.COLOR_RGB2GRAY)
+                #circles1 = cv2.HoughCircles(gray,cv2.HOUGH_GRADIENT,1.31,260,param1=50,param2=30,minRadius=0,maxRadius=0)
+                
+                circles2 = cv2.HoughCircles(maskAmarillo,cv2.HOUGH_GRADIENT,1.31,260,param1=50,param2=30,minRadius=0,maxRadius=0)
 
-                circles = cv2.HoughCircles(gray,cv2.HOUGH_GRADIENT,1.31,260,param1=50,param2=30,minRadius=0,maxRadius=0)
-
-                if circles is not None:
+                if circles2 is not None:
                     
-                    circles = np.round(circles[0, :]).astype("int")
+                    circles2 = np.round(circles2[0, :]).astype("int")
                     
-                    for (x, y, r) in circles:
+                    for (x, y, r) in circles2:
                         self.radii = r
                         self.x_cor = x
                         self.y_cor = y
-                        cv2.circle(cv_image, (x, y), r, (0, 255, 0), 2)
+                        cv2.circle(cv_image, (x, y), r, (0, 255, 255), 2)
                         cv2.rectangle(cv_image, (x - 2, y - 2), (x + 2, y + 2), (0, 128, 255), -1)
                 
                 #rospy.loginfo(self.radii)

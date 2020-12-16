@@ -4,8 +4,7 @@
     <rosparam file="$(find rover)/config/joint_names_rover.yaml" command="load" />
     <rosparam file="$(find rover)/config/parameters.yaml" command="load" />
 
-    <!-- MAPA DE PRUEBAS-->
-    <arg name="mapa" default="$(find rover)/worlds/calibracion_estatico.world"/>
+    <arg name="mapa_estatico" default="$(find rover)/worlds/calibracion_estatico.world"/>
 
     <!-- ARGUMENTS IN ROBOT SPAWN NODE-->
     <arg name="x" default="0.0"/>
@@ -74,7 +73,7 @@
 
     <!-- OPEN GAZEBO -->
     <include file="$(find gazebo_ros)/launch/empty_world.launch">
-        <arg name="world_name" value="$(arg mapa)"/> 
+        <arg name="world_name" value="$(arg mapa_estatico)"/> 
         <arg name="use_sim_time" value="true"/>
         <arg name="debug" value="false"/>
         <arg name="paused" value="false"/>
@@ -121,14 +120,4 @@
         name="TF" 
         output="screen">        
     </node>
-
-    <node 
-        pkg="rover" 
-        type="load_image_node.py" 
-        name="image_loader" 
-        output="screen">        
-    </node>
-
-
-
 </launch>

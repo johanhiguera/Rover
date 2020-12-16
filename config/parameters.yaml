@@ -29,7 +29,7 @@ beta_l3 : -1.04041
 l_l3 : 0.4019374749
 
 #PARAMETROS DEL ROBOT
-w_max : 1.2                        #VELOCIDAD ANGULAR MAXIMA
+w_max : 1                        #VELOCIDAD ANGULAR MAXIMA
 vel_cruc : 1.6                     #VELOCIDAD DE CRUCERO TRASLACIONAL
 dv : 0.3
 dw : 0.1
@@ -58,4 +58,5 @@ f : 20                             #FRECUENCIA DE PUBLICACION
 
 #PARAMETROS DEL CONTROLADOR DEL ROBOT
 Kp : [ 5, 0.005,-2]                 #COEFICIENTES DEL CONTROLADOR POLAR Y LINEAL
-Kp_1 : [0.1, 0.1]                       #COEFICIENTES DEL CONTROLADOR SEGUIMIENTO VISUAL
+Kp_1 : [0.1, -0.01]                       #COEFICIENTES DEL CONTROLADOR SEGUIMIENTO VISUAL
+Ki : 0.05                       #COEFICIENTES DEL CONTROLADOR SEGUIMIENTO VISUAL

@@ -8,6 +8,8 @@
     <arg name="mapa_lomas" default="$(find rover)/worlds/mapa.world"/>
     <arg name="mapa_dinamico" default="$(find rover)/worlds/calibracion_dinamico.world"/>
     <arg name="mapa_estatico" default="$(find rover)/worlds/calibracion_estatico.world"/>
+    <arg name="mapa_estatico2" default="$(find rover)/worlds/calibracion_estatico_2esferas.world"/>
+    <arg name="mapa_proyecto" default="$(find rover)/worlds/mapa_proyecto.world"/>
     <!-- ARGUMENTS IN ROBOT SPAWN NODE-->
     <arg name="x" default="0.0"/>
     <arg name="y" default="0.0"/>
@@ -54,7 +56,7 @@
 
     <!-- OPEN GAZEBO -->
     <include file="$(find gazebo_ros)/launch/empty_world.launch">
-        <arg name="world_name" value="$(arg mapa_dinamico)"/> 
+        <arg name="world_name" value="$(arg mapa_proyecto)"/> 
         <arg name="use_sim_time" value="true"/>
         <arg name="debug" value="false"/>
         <arg name="paused" value="false"/>
