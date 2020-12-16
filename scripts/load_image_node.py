@@ -80,8 +80,8 @@ class Image_loader:
                 self.send_datos_edited_image = self.bridge.cv2_to_imgmsg(self.edited_image, encoding="rgb8")
 
                 if self.p==0:
-                    rospy.loginfo("---------------------------------")
-                    rospy.loginfo(self.send_datos_edited_image)
+                    #rospy.loginfo("---------------------------------")
+                    #rospy.loginfo(self.send_datos_edited_image)
                     self.p=1
                 self.pub_image.publish(self.send_datos_edited_image)
                  
