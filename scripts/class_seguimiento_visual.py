@@ -4,7 +4,7 @@ import rospy
 
 from    std_msgs.msg        import Float64MultiArray
 
-class CONTROL:  
+class VISUAL:  
 
     def __init__(self):
         #PARAMETROS

@@ -62,7 +62,7 @@
     </include>
 
     <!-- RViz  -->
-    <!--<node name="rviz" pkg="rviz" type="rviz" args="-d $(find kobuki_lidar)/rviz/config.rviz"/>-->
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find kobuki_lidar)/rviz/config.rviz"/>
 
     <!-- NODE OF ROBOT SPAWN -->
     <node pkg="gazebo_ros" type="spawn_model" name="spawn_$(arg robot_name)"
@@ -105,8 +105,15 @@
 
     <node 
         pkg="rover" 
-        type="Seguimiento_Visual_node.py" 
+        type="Seguimiento_Visual_Node.py" 
         name="Visual" 
+        output="screen">        
+    </node>
+
+    <node 
+        pkg="rover" 
+        type="load_image_node.py" 
+        name="Load_image" 
         output="screen">        
     </node>
 </launch>

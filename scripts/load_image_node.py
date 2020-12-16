@@ -25,7 +25,6 @@ class Image_loader:
     #------------------------------------------------------#
     # Callback function for image
     def cb_image(self, data):
-
         self.image_width = data.width
         self.image_height = data.height
         self.image_length = data.step
@@ -49,7 +48,7 @@ class Image_loader:
         self.bridge = CvBridge()
 
         # Create image subscriber
-        self.image_sub = rospy.Subscriber("/rover/camera/image_raw", numpy_msg(Image), self.cb_image)
+        rospy.Subscriber("/rover/camera/image_raw", numpy_msg(Image), self.cb_image)
         
         ##Publicador de la nueva imagen
         self.pub_image = rospy.Publisher("/edited_image",numpy_msg(Image), queue_size = 10)
@@ -79,6 +78,7 @@ class Image_loader:
                 self.edited_image = cv_image
 
                 self.send_datos_edited_image = self.bridge.cv2_to_imgmsg(self.edited_image, encoding="rgb8")
+
                 if self.p==0:
                     rospy.loginfo("---------------------------------")
                     rospy.loginfo(self.send_datos_edited_image)
