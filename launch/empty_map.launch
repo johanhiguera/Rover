@@ -124,7 +124,7 @@
 
     <node 
         pkg="rover" 
-        type="class_load_image.py" 
+        type="load_image_node.py" 
         name="image_loader" 
         output="screen">        
     </node>
